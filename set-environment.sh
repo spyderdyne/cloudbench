@@ -23,17 +23,9 @@
 
 echo "Setting global path variables"
 
-mythos_home=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
-echo "Home (Mythos) = $mythos_home"
+cb_home=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
+echo "Home (Cloudbench Deployment Automations) = $cb_home"
 
-reporting_home="$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/seshat/clients"
-echo "Reporting Home (Seshat) = $reporting_home"
+cloudbench_home="$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/../cbtool"
+echo "Home (Cloudbench Orchestrator Home) = $cloudbench_home"
 
-medusa_home="$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/medusa"
-echo "Scale Testing Home (Medusa) = $medusa_home"
-
-sanity_home="$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/janus"
-echo "Sanity Testing Home (Janus) = $sanity_home"
-
-odin_home="$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/odin"
-echo "Rally Testing Home (Odin) = $odin_home"
