@@ -198,6 +198,7 @@ fi
 #    vagrant plugin install vagrant-mutate
 #fi
 
+
 #Prune the global vagrant indexes to eliminate any leftover wierdness left by troubleshooting
 vagrant global-status --prune
 
