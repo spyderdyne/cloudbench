@@ -25,10 +25,10 @@
 
 source ../set-environment.sh
 
-GORGON_IMAGE='medusa_gorgon'
-GORGON_IMAGE_URI='https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-server-cloudimg-amd64-vagrant-disk1.box'
-SERPENT_IMAGE='medusa_serpent'
-SERPENT_IMAGE_URI='https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-server-cloudimg-amd64-vagrant-disk1.box'
+ORCHESTRATOR_IMAGE='cloudbench_orchestrator'
+ORCHESTRATOR_IMAGE_URI='https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-server-cloudimg-amd64-vagrant-disk1.box'
+CLIENT_IMAGE='cloudbench_client'
+CLIENT_IMAGE_URI='https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-server-cloudimg-amd64-vagrant-disk1.box'
 
 #Configure the environment
 #. ../set-environment.sh
@@ -212,33 +212,33 @@ vagrant global-status --prune
 echo "Creating public/private key pair..."
 echo "Skipping until automation is resolved..."
 #Create SSH Keys for the images and add to puppet
-ssh-keygen -t rsa -P '' -f keys/id_rsa_medusa
-#echo -e '\n \n' | ssh-keygen -t rsa -f keys/id_rsa_medusa
-ssh-keygen -f keys/id_rsa_medusa -e -m pem > keys/id_rsa_medusa.pem
+ssh-keygen -t rsa -P '' -f keys/id_rsa_cloudbench
+#echo -e '\n \n' | ssh-keygen -t rsa -f keys/id_rsa_cloudbench
+ssh-keygen -f keys/id_rsa_cloudbench -e -m pem > keys/id_rsa_cloudbench.pem
 #Copy keys to paths
-cp keys/id_rsa_medusa* medusa_gorgon/modules/medusa_gorgon/files/
-cp keys/id_rsa_medusa.pem medusa_serpent/modules/medusa_serpent/files/
+cp keys/id_rsa_cloudbench* cloudbench_orchestrator/modules/cloudbench_orchestrator/files/
+cp keys/id_rsa_cloudbench.pem cloudbench_client/modules/cloudbench_client/files/
 
 #Create Medusa master image
 echo "Creating Medusa Gorgon (server) Image"
 sleep 3
 #Download the image if needed
-if vagrant box list | grep $GORGON_IMAGE
+if vagrant box list | grep $ORCHESTRATOR_IMAGE
   then
-    echo "$GORGON_IMAGE exists.  Moving on..."
+    echo "$ORCHESTRATOR_IMAGE exists.  Moving on..."
   else
-    echo "Importing Vagrant box $GORGON_IMAGE from '$GORGON_IMAGE_URI'"
-    vagrant box add $GORGON_IMAGE $GORGON_IMAGE_URI
-    echo "Box $GORGON_IMAGE server image added."
+    echo "Importing Vagrant box $ORCHESTRATOR_IMAGE from '$ORCHESTRATOR_IMAGE_URI'"
+    vagrant box add $ORCHESTRATOR_IMAGE $ORCHESTRATOR_IMAGE_URI
+    echo "Box $ORCHESTRATOR_IMAGE server image added."
 fi
 
 #Mutate the box to libvirt format if another provider
-#if vagrant box list $GORGON_IMAGE | grep "$GORGON_IMAGE (libvirt,"
+#if vagrant box list $ORCHESTRATOR_IMAGE | grep "$ORCHESTRATOR_IMAGE (libvirt,"
 #  then
-#    echo "Box $GORGON_IMAGE server image is in libvirt format.  Provisioning..."
+#    echo "Box $ORCHESTRATOR_IMAGE server image is in libvirt format.  Provisioning..."
 #  else
-#    vagrant mutate $GORGON_IMAGE libvirt
-#    echo "Box $GORGON_IMAGE mutated to libvirt format.  Provisioning..."
+#    vagrant mutate $ORCHESTRATOR_IMAGE libvirt
+#    echo "Box $ORCHESTRATOR_IMAGE mutated to libvirt format.  Provisioning..."
 #fi
 
 
@@ -246,22 +246,22 @@ fi
 echo "Creating Medusa Serpent (client) Image"
 sleep 3
 ##Download the image if needed
-if vagrant box list | grep $SERPENT_IMAGE
+if vagrant box list | grep $CLIENT_IMAGE
   then
-    echo "$SERPENT_IMAGE exists.  Moving on..."
+    echo "$CLIENT_IMAGE exists.  Moving on..."
   else
-    echo "Importing Vagrant box $SERPENT_IMAGE_URI from '$SERPENT_IMAGE_URI'"
-    vagrant box add $SERPENT_IMAGE $SERPENT_IMAGE_URI
-    echo "Box $SERPENT_IMAGE client image added."
+    echo "Importing Vagrant box $CLIENT_IMAGE_URI from '$CLIENT_IMAGE_URI'"
+    vagrant box add $CLIENT_IMAGE $CLIENT_IMAGE_URI
+    echo "Box $CLIENT_IMAGE client image added."
 fi
 
 #Mutate the box to libvirt format if another provider
-#if vagrant box list $SERPENT_IMAGE | grep "$SERPENT_IMAGE (libvirt,"
+#if vagrant box list $CLIENT_IMAGE | grep "$CLIENT_IMAGE (libvirt,"
 #  then
-#    echo "Box $SERPENT_IMAGE slave image is in libvirt format.  Provisioning..."
+#    echo "Box $CLIENT_IMAGE slave image is in libvirt format.  Provisioning..."
 #  else
 #    vagrant mutate $SLAVE_IMAGE libvirt
-#    echo "Box $SERPENT_IMAGE mutated to libvirt format.  Provisioning..."
+#    echo "Box $CLIENT_IMAGE mutated to libvirt format.  Provisioning..."
 #fi
 
 
@@ -324,11 +324,11 @@ function image_init() {
       done
   }
 
-image_init 'medusa_gorgon' 'medusa_serpent'
+image_init 'cloudbench_orchestrator' 'cloudbench_client'
 
 #Create Images using DIB
-#time DIB_RELEASE=vivid disk-image-create -o $mythos_home/images/medusa_gorgon/workspace/medusa_gorgon.qcow2 vm ubuntu
-#time DIB_RELEASE=vivid disk-image-create -o $mythos_home/images/medusa_serpent/workspace/medusa_serpent.qcow2 vm debian
+#time DIB_RELEASE=vivid disk-image-create -o $mythos_home/images/cloudbench_orchestrator/workspace/cloudbench_orchestrator.qcow2 vm ubuntu
+#time DIB_RELEASE=vivid disk-image-create -o $mythos_home/images/cloudbench_client/workspace/cloudbench_client.qcow2 vm debian
 
 
 echo "Medusa Instance Provisioning Steps Completed."
